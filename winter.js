@@ -45,107 +45,73 @@ const layerControl = L.control.layers({
 }).addTo(karte);
 
 
-let letzteGeonamesUrl = null;
-karte.on("load zoomend moveend", function () {
-    console.log("karte geladen", karte.getBounds());
-
-    const wikipediaGruppe = L.featureGroup().addTo(karte);
-    layerControl.addOverlay(wikipediaGruppe, "Wikipedia Artikel");
-
-
-    async function wikipediaArtikelLaden(url) {
-        wikipediaGruppe.clearLayers();
-
-
-        console.log("Lade", url);
-
-
-        const response = await fetch(url)
-        const jsonData = await response.json();
-
-        console.log(jsonData);
-        for (let artikel of jsonData.geonames) {
-            const wikipediamarker = L.marker([artikel.lat, artikel.lng], {
-                icon: L.icon({
-                    iconUrl: "icons/icons8-wikipedia-26.png",
-                    iconSize: [22, 22]
-                })
-
-            }).addTo(wikipediaGruppe);
-
-
-            wikipediamarker.bindPopup(`
-        <h3>${artikel.titel}</h3>
-        <p>${artikel.summary}</p>
-        <hr>
-        <footer><a target="_blank" href="https://${artikel.wikipediaUrl}"Weblink</a></footer>
-        `);
-        }
-    }
-
-    let ausschnitt = {
-        n: karte.getBounds().getNorth(),
-        s: karte.getBounds().getSouth(),
-        o: karte.getBounds().getEast(),
-        w: karte.getBounds().getWest()
-    }
-    console.log(ausschnitt);
-    const geonamesUrl = `http://api.geonames.org/wikipediaBoundingBoxJSON?formatted=true&north=${ausschnitt.n}&south=${ausschnitt.s}&east=${ausschnitt.o}&west=${ausschnitt.w}&username=webmapping&style=full&maxRows=50&lang=de`;
-    console.log(geonamesUrl);
-
-    if (geonamesUrl != letzteGeonamesUrl) {
-        //JSON-Artikel Laden
-        wikipediaArtikelLaden(geonamesUrl);
-        letzteGeonamesUrl = geonamesUrl;
-    }
-});
-
-
 karte.setView(
-    [47.80814, 11.04209], 8);
-const url = 'https://www.salzburg.gv.at/ogd/294de677-b02d-4a74-b189-cc04fa820d96/Schipisten_WGS84.json'
+    [47.80949, 13.05501], 10);
 
-function schimakemarker(feature, latlng) {
+const url = 'https://www.salzburg.gv.at/ogd/28c9e877-36e7-4ced-896e-6bead8f9e190/Liftanlagen.json'
+
+function Liftmakemarker(geometry, latlng) {
     const icon = L.icon({
-        iconUrl: 'http://www.data.wien.gv.at/icons/sehenswuerdigogd.svg',
+        iconUrl: "icons/icon_ski_alpin_schwarz_auf_weiss_250px.png",
         iconSize: [16, 16]
     });
-    const schimarker = L.marker(latlng, {
+    const Liftmarker = L.marker(latlng, {
         icon: icon
     });
 
-    schimarker.bindPopup(`
-        <h3>${feature.properties.NAME}</h3>
-        <p> ${feature.properties.BEMERKUNG}<p>
+    Liftmarker.bindPopup(`
+        <h3>${geometry.Name}</h3>
+        <p> ${geometry.Name.attributes.Anlagenart.Saison.Status}<p>
         <hr>
-        <footer><a href="${feature.properties.WEITERE_INF}" target = "Wienfenster" >Weblink</a></footer>
+        <footer><a href="${geometry.Name.attributes.Anlagenart.Saison.Status}" target = "Lifte" >Weblink</a></footer>
         `);
-    return schimarker
+    return Liftmarker
 }
-async function loadSchi(url) {
+async function loadLift(url) {
     const clusterGruppe = L.markerClusterGroup();
     const response = await fetch(url);
-    const schiData = await response.json();
-    const geoJson = L.geoJson(schiData, {
-        pointToLayer: schimakemarker
+    const LiftData = await response.json();
+    const geoJson = L.geoJson(LiftData, {
+        pointToLayer: Liftmakemarker
     });
     clusterGruppe.addLayer(geoJson);
     karte.addLayer(clusterGruppe);
-    layerControl.addOverlay(clusterGruppe, "SchiPisten");
-
-
-    karte.addControl(new L.Control.Fullscreen());
-
-    const scale = L.control.scale({
-        imperial: false,
-        metric: true,
-    });
-    karte.addControl(scale);
+    layerControl.addOverlay(clusterGruppe, "Liftanlagen");
 
     const suchFeld = new L.Control.Search({
         layer: clusterGruppe,
-        propertyName: "NAME",
+        propertyName: "Name",
         zoom: 17,
         initial: false
     });
-    karte.addControl(suchFeld);}
+    karte.addControl(suchFeld);
+}
+loadLift(url);
+
+
+//PlugIns Fullscreen, Maßstab, Minimap, Suchfeld
+
+karte.addControl(new L.Control.Fullscreen());
+
+var coords = new L.Control.Coordinates();
+coords.addTo(karte);
+karte.on('click', function (e) {
+    coords.setCoordinates(e);
+});
+
+const scale = L.control.scale({
+    imperial: false,
+    metric: true,
+});
+karte.addControl(scale);
+
+new L.Control.MiniMap(
+
+    L.tileLayer("https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png", {
+        subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+    }), {
+        zoomLevelOffset: -4,
+        toggleDisplay: true
+    }
+
+).addTo(karte);
