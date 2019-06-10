@@ -10,9 +10,6 @@
     <!--Schriftart-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet">
 
-    <!--Font aweson Verwendung um die Icons besser anpassen zu können-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font- awesome/4.7.0/css/font-awesome.min.css">
-
     <!--Leaflet neueste Version für die Erstellung der Grundkarte-->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
@@ -21,6 +18,9 @@
     <script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
     <link href="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css"
         rel="stylesheet" />
+
+  <!--Kartenauschnitt kann weitergehen werden Src=source, Link zu script -> -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet-hash/0.2.1/leaflet-hash.js'></script>
 
     <!--Plugin: Koordinaten Anzeigen-->
    <link href="plugins/control.coordinates.css" rel="stylesheet">
@@ -47,37 +47,12 @@
 <body>
     <header>
         <span> Freizeitgestaltung im Salzburger Land </span>
-        <a href="https://www.salzburg.gv.at"><img src="icons/salzburg_logo.png" alt="Land Salzburg" /></a>
-    </header>
-    <main>
-
-
-<p>Die Salzburger Natur genießen</p>
-<p>Am Nordrand der Alpen gelegen, erstreckt sich vor der Stadt Salzburg ein gewaltiges Bergpanorama. 
-Genau das Richtige für Wanderer und alle, die in der Natur vom Trubel der Stadt abschalten wollen! Erkunden Sie die Hausberge der Stadt, etwa den Untersberg oder Gaisberg.</p>
-
-
-
-
-
+    
         <h2> Übersichtskarte Stadt Salzburg</h2>
-        <p>blabla bla blabla. Quelle: <a href=""></a></p>
-
         <div id="map" data-lat="47.80949" data-lng="13.05501" data-title="Salzburg" ></div>
     </main>
 
-
-
     </script>
 </body>
-
-<footer>
-    <nav>
-        <a class="back" href="https://leonie.github.io/nz/index.html">
-            Sommerkarte</a>
-        <p>
-            <a class="next" href="https://nico.github.io/nz/index.html">Winterkarte </a></p>
-    </nav>
-</footer>
 
 </html>
